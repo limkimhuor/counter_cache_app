@@ -10,15 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170826093212) do
+ActiveRecord::Schema.define(version: 20170827074301) do
 
   create_table "posts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "title"
     t.text     "description", limit: 65535
-    t.integer  "votes_count",               default: 0
-    t.integer  "vote_points",               default: 0
+    t.integer  "votes_count",               default: 0, null: false
+    t.integer  "vote_points",               default: 0, null: false
+    t.integer  "user_id"
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
+    t.index ["user_id"], name: "index_posts_on_user_id", using: :btree
+  end
+
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "name"
+    t.integer  "posts_count",     default: 0, null: false
+    t.integer  "post_vote_count", default: 0, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "votes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -29,5 +39,6 @@ ActiveRecord::Schema.define(version: 20170826093212) do
     t.index ["post_id"], name: "index_votes_on_post_id", using: :btree
   end
 
+  add_foreign_key "posts", "users"
   add_foreign_key "votes", "posts"
 end
